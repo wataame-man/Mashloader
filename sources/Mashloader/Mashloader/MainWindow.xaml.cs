@@ -115,19 +115,27 @@ namespace WpfApp1
             elements = driver.FindElements(By.ClassName("text-dark"));
             string date = "marshmallow_" + DateTime.Now.ToString("MM月dd日HH時mm分ss秒") +".txt";
             Console.WriteLine("出力先:" + date);
-            StreamWriter sw = File.CreateText(date);
+            string doc = "";
+
             int count = 0;
             foreach (var x in elements)
             {
                 count++;
-                sw.WriteLine(count);
-                sw.WriteLine(x.Text);
-                sw.WriteLine("");
+                doc += count;
+                doc += "\n";
+                doc += x.Text;
+                doc += "\n";
+                doc += "\n";
+                
                 if (count >= nummax)
                 {
                     break;
                 }
             }
+
+            StreamWriter sw = File.CreateText(date);
+
+            sw.Write(doc);
 
             sw.Close();
             MessageBox.Show( (count) +"件マシュマロを取得しました。");
