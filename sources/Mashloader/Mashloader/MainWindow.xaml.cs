@@ -31,8 +31,11 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
-            // Webドライバーのインスタンス
-            driver = new ChromeDriver(System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+            // chromedriverインスタンス設定
+            ChromeDriverService driverservice = ChromeDriverService.CreateDefaultService();
+            driverservice.HideCommandPromptWindow = true;
+            // Webドライバーのインスタンス作成
+            driver = new ChromeDriver(driverservice);
         }
 
         private void Login_botton(object sender, RoutedEventArgs e)
@@ -76,8 +79,6 @@ namespace WpfApp1
 
                 if (elements.Count < nummax)
                 {
-
-
                     
                     try
                     {
@@ -89,6 +90,7 @@ namespace WpfApp1
                     {
                         //移動のためのクリックなのでエラーは握りDescription つぶす。
                     }
+
                     // ボタンの描画まで時間がかかる場合があるので待つ。
                     System.Threading.Thread.Sleep(3000);
 
@@ -121,11 +123,12 @@ namespace WpfApp1
             foreach (var x in elements)
             {
                 count++;
+                // ざっくり整形して文字列生成
                 doc += count;
-                doc += "\n";
+                doc += Environment.NewLine;
                 doc += x.Text;
-                doc += "\n";
-                doc += "\n";
+                doc += Environment.NewLine;
+                doc += Environment.NewLine;
                 
                 if (count >= nummax)
                 {
@@ -133,6 +136,7 @@ namespace WpfApp1
                 }
             }
 
+            // 書き込み回数多いとセキュリティソフトにトロイの木馬扱いされるので一括書き込みする
             StreamWriter sw = File.CreateText(date);
 
             sw.Write(doc);
@@ -140,23 +144,13 @@ namespace WpfApp1
             sw.Close();
             MessageBox.Show( (count) +"件マシュマロを取得しました。");
 
-        }
-
-        private void ev_set(object sender, RoutedEventArgs e)
-        {
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(2);
-
-            driver.Navigate().GoToUrl(@"https://marshmallow-qa.com/messages");
-            Console.WriteLine(driver.FindElement(By.ClassName("text-dark")).Text);
-
-        }
-
-
-        //
+        }      
 
         protected virtual void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // chromedriver後処理
             driver.Quit();
+            driver.Dispose();
         }
     }
 }
