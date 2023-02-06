@@ -61,7 +61,20 @@ namespace WpfApp1
         private void Get_marshmallow_button(object sender, RoutedEventArgs e)
         {
             string text = NumMaxText.Text;
-            int nummax = int.Parse(text);
+            int nummax = 0;
+
+            // 数値取得
+            try
+            {
+                nummax = int.Parse(text);
+            }
+            catch
+            {
+                // パース出来なかったらエラーメッセージを出して終了
+                MessageBox.Show("取得上限は半角数字のみ入力してください。");
+
+                return;
+            }
             driver.Navigate().GoToUrl(@"https://marshmallow-qa.com/messages");
 
             ReadOnlyCollection<IWebElement> elements = driver.FindElements(By.ClassName("text-dark"));
